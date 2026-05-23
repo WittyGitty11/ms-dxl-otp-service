@@ -12,9 +12,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableCaching
 public class OtpConfig {
-    @Value("${spring.application.name:otp-service}")
-    private String applicationName;
-
     @Value("${otp.expiry-minutes:5}")
     private int expiryMinutes;
 
@@ -23,24 +20,11 @@ public class OtpConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager("otpCache");
-        cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(expiryMinutes, TimeUnit.MINUTES)
-                .maximumSize(10000));
-        return cacheManager;
+        CaffeineCacheManager mgr = new CaffeineCacheManager("otpCache");
+        mgr.setCaffeine(Caffeine.newBuilder().expireAfterWrite(expiryMinutes, TimeUnit.MINUTES).maximumSize(10000));
+        return mgr;
     }
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public int getExpiryMinutes() {
-        return expiryMinutes;
-    }
-
-    public int getOtpLength() {
-        return otpLength;
-    }
+    public int getExpiryMinutes() { return expiryMinutes; }
+    public int getOtpLength() { return otpLength; }
 }
-
-// Made with Bob
