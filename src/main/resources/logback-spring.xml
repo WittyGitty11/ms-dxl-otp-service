@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>Timestamp=%d{dd-MM-yyyy HH:mm:ss.SSS},Level=%-5level,%5level --- System=%X{system},Thread=%thread,CorrelationId=%X{correlationId},MSISDN=%X{msisdn},Usecase=%X{usecase},Channel=%X{channel},EventType=%X{eventType},Message=%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender (Optional) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/otp-service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/otp-service-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>Timestamp=%d{dd-MM-yyyy HH:mm:ss.SSS},Level=%-5level,%5level --- System=%X{system},Thread=%thread,CorrelationId=%X{correlationId},MSISDN=%X{msisdn},Usecase=%X{usecase},Channel=%X{channel},EventType=%X{eventType},Message=%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+    <!-- Application Logger -->
+    <logger name="com.example.otpservice" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration>
+
+<!-- Made with Bob -->
