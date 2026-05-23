@@ -2,15 +2,12 @@ package com.example.otpservice.controller;
 
 import com.example.otpservice.service.OtpService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/otp")
 public class OtpController {
@@ -27,16 +24,8 @@ public class OtpController {
         String correlationId = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         
         try {
-            // Setup MDC for request logging
-            MDC.put("system", "ms-dxl-otp-service");
-            MDC.put("correlationId", correlationId);
-            MDC.put("usecase", "LOGIN");
-            MDC.put("channel", "OTP-API");
-            MDC.put("eventType", "OTP_GENERATE|REQUEST_RECEIVED");
-            
-            // Log request body
             String requestBody = objectMapper.writeValueAsString(request);
-            log.info("Incoming request body: " + requestBody);
+            System.out.println("System=ms-dxl-otp-service,CorrelationId=" + correlationId + ",Usecase=LOGIN,Channel=OTP-API,EventType=OTP_GENERATE|REQUEST_RECEIVED,Message=Incoming request body: " + requestBody);
             
             String otp = otpService.generateOtp(request.get("msisdn"));
             Map<String, Object> response = new HashMap<>();
@@ -44,17 +33,13 @@ public class OtpController {
             response.put("otp", otp);
             response.put("msisdn", request.get("msisdn"));
             
-            MDC.put("eventType", "OTP_GENERATE|RESPONSE_SENT");
             String responseBody = objectMapper.writeValueAsString(response);
-            log.info("Outgoing response body: " + responseBody);
+            System.out.println("System=ms-dxl-otp-service,CorrelationId=" + correlationId + ",Usecase=LOGIN,Channel=OTP-API,EventType=OTP_GENERATE|RESPONSE_SENT,Message=Outgoing response body: " + responseBody);
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            MDC.put("eventType", "OTP_GENERATE|REQUEST_ERROR");
-            log.error("Error processing generate request: " + e.getMessage(), e);
+            System.out.println("System=ms-dxl-otp-service,CorrelationId=" + correlationId + ",Usecase=LOGIN,Channel=OTP-API,EventType=OTP_GENERATE|REQUEST_ERROR,Message=Error processing generate request: " + e.getMessage());
             throw new RuntimeException(e);
-        } finally {
-            MDC.clear();
         }
     }
 }
